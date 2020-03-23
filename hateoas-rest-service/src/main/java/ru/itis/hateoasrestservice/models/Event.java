@@ -20,10 +20,10 @@ public class Event {
 
     private Integer eventLineNumber;
     private String title;
-    private String eventDescription;
+//    private String eventDescription;
     // time (?)
-    private Timestamp eventStartTime;
-    private Timestamp recordingIsAvailableUntil;
+//    private Timestamp eventStartTime;
+//    private Timestamp recordingIsAvailableUntil;
     private Long averageDuration;
     private Long realDuration;
     // Assigned notAssigned Canceled notObserved Finished

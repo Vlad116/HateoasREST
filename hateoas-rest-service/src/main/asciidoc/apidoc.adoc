@@ -1,4 +1,4 @@
-= Описание API по курсам
+= Описание API записи на прием
 
 == Методы
 
@@ -14,12 +14,12 @@
 
 .request
 
-include::{snippets}/publish_course/http-request.adoc[]
+include::{snippets}/appointment_event/http-request.adoc[]
 
 .response
 
-include::{snippets}/publish_course/http-response.adoc[]
+include::{snippets}/appointment_event/http-response.adoc[]
 
 .response-fields
 
-include::{snippets}/publish_course/response-fields.adoc[]
+include::{snippets}/appointment_event/response-fields.adoc[]

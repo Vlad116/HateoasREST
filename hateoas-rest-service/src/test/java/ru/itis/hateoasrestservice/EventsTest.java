@@ -47,8 +47,14 @@ public class EventsTest {
 //    @JoinColumn(name = "shedule_id")
 //    private Shedule shedule;
 
+    //                .andExpect(jsonPath("$.eventStartTime").value(assignedEvent().getEventStartTime()))
+//                .andExpect(jsonPath("$.recordingIsAvailableUntil").value(assignedEvent().getRecordingIsAvailableUntil()))
+
+//                        fieldWithPath("eventStartTime").description("Время приема"),
+//                        fieldWithPath("recordingIsAvailableUntil").description("До какого времени место в очереди доступно к записи")
+
     @Test
-    public void coursePublishTest() throws Exception {
+    public void eventAppointmentTest() throws Exception {
         mockMvc.perform(put("/events/1/appointment")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(assignedEvent().getTitle()))
@@ -56,16 +62,12 @@ public class EventsTest {
                 .andExpect(jsonPath("$.eventLineNumber").value(assignedEvent().getEventLineNumber()))
                 .andExpect(jsonPath("$.averageDuration").value(assignedEvent().getAverageDuration()))
                 .andExpect(jsonPath("$.realDuration").value(assignedEvent().getRealDuration()))
-                .andExpect(jsonPath("$.eventStartTime").value(assignedEvent().getEventStartTime()))
-                .andExpect(jsonPath("$.recordingIsAvailableUntil").value(assignedEvent().getRecordingIsAvailableUntil()))
-                .andDo(document("publish_course", responseFields(
+                .andDo(document("appointment_event", responseFields(
                         fieldWithPath("title").description("Название мероприятия"),
                         fieldWithPath("state").description("Состояние записи"),
                         fieldWithPath("eventLineNumber").description("Номер в очереди"),
                         fieldWithPath("averageDuration").description("Ожидаемая продолжительность приема"),
-                        fieldWithPath("realDuration").description("Реальная продолжительность приема"),
-                        fieldWithPath("eventStartTime").description("Время приема"),
-                        fieldWithPath("recordingIsAvailableUntil").description("До какого времени место в очереди доступно к записи")
+                        fieldWithPath("realDuration").description("Реальная продолжительность приема")
                 )));
     }
 
@@ -75,8 +77,8 @@ public class EventsTest {
                 .eventLineNumber(12)
                 .state("ASSIGNED")
                 .title("Очередь к терапевту")
-                .eventStartTime(new Timestamp(2020,3,23,17,40,0,0))
-                .recordingIsAvailableUntil(new Timestamp(2020,3,23,17,10,0,0))
+//                .eventStartTime(new Timestamp(2020,3,23,17,40,0,0))
+//                .recordingIsAvailableUntil(new Timestamp(2020,3,23,17,10,0,0))
                 .averageDuration(15L)
                 .realDuration(2L)
                 .build();

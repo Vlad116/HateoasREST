@@ -1,9 +1,11 @@
 package ru.itis.hateoasrestservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.itis.hateoasrestservice.models.Event;
 import ru.itis.hateoasrestservice.repositories.EventsRepository;
 
+@Service
 public class EventsServiceImpl implements EventsService {
 
     @Autowired
