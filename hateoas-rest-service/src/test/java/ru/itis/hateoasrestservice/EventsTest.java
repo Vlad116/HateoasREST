@@ -8,14 +8,28 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.itis.hateoasrestservice.models.Event;
 import ru.itis.hateoasrestservice.services.EventsService;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -29,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 public class EventsTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -40,48 +55,68 @@ public class EventsTest {
         when(eventsService.appointment(1L)).thenReturn(assignedEvent());
     }
 
-//    // Assigned notAssigned Canceled notObserved Finished
-//    private String state;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "shedule_id")
-//    private Shedule shedule;
-
-    //                .andExpect(jsonPath("$.eventStartTime").value(assignedEvent().getEventStartTime()))
-//                .andExpect(jsonPath("$.recordingIsAvailableUntil").value(assignedEvent().getRecordingIsAvailableUntil()))
-
-//                        fieldWithPath("eventStartTime").description("Время приема"),
-//                        fieldWithPath("recordingIsAvailableUntil").description("До какого времени место в очереди доступно к записи")
-
     @Test
     public void eventAppointmentTest() throws Exception {
         mockMvc.perform(put("/events/1/appointment")).andDo(print())
                 .andExpect(status().isOk())
+//                .andExpect(jsonPath())
                 .andExpect(jsonPath("$.title").value(assignedEvent().getTitle()))
+                .andExpect(jsonPath("$.eventDescription").value(assignedEvent().getEventDescription()))
                 .andExpect(jsonPath("$.state").value(assignedEvent().getState()))
                 .andExpect(jsonPath("$.eventLineNumber").value(assignedEvent().getEventLineNumber()))
                 .andExpect(jsonPath("$.averageDuration").value(assignedEvent().getAverageDuration()))
                 .andExpect(jsonPath("$.realDuration").value(assignedEvent().getRealDuration()))
-                .andDo(document("appointment_event", responseFields(
-                        fieldWithPath("title").description("Название мероприятия"),
-                        fieldWithPath("state").description("Состояние записи"),
-                        fieldWithPath("eventLineNumber").description("Номер в очереди"),
-                        fieldWithPath("averageDuration").description("Ожидаемая продолжительность приема"),
-                        fieldWithPath("realDuration").description("Реальная продолжительность приема")
-                )));
+                .andExpect(jsonPath("$.eventStartTime").value(assignedEvent().getEventStartTime()))
+                .andExpect(jsonPath("$.recordingIsAvailableUntil").value(assignedEvent().getRecordingIsAvailableUntil()))
+                .andDo(document("appointment_event",
+                        links(halLinks(),
+                                linkWithRel("appointment").description("Appointment this event"),
+                                linkWithRel("self").optional().description("This event")
+                        ),
+                        responseFields(
+                                fieldWithPath("title").description("Название мероприятия"),
+                                fieldWithPath("eventDescription").description("Описание мероприятия"),
+                                fieldWithPath("state").description("Состояние записи"),
+                                fieldWithPath("eventLineNumber").description("Номер в очереди"),
+                                fieldWithPath("averageDuration").description("Ожидаемая продолжительность приема"),
+                                fieldWithPath("realDuration").description("Реальная продолжительность приема"),
+                                fieldWithPath("eventStartTime").description("Время приема (начало)"),
+                                fieldWithPath("recordingIsAvailableUntil").description("До какого времени место в очереди доступно для записи"),
+                                fieldWithPath("_links.appointment.href").description("To event appointment link")
+                        )
+                ));
     }
 
     private Event assignedEvent() {
+
+        GregorianCalendar gCalendarStartTime = new GregorianCalendar();
+        gCalendarStartTime.set(2020, Calendar.MARCH, 28, 10, 0, 0);
+
+        GregorianCalendar gCalendarRecordingIsAvailableUntil = new GregorianCalendar();
+        gCalendarRecordingIsAvailableUntil.set(2020, Calendar.MARCH, 28, 8, 30, 0);
+
+        gCalendarStartTime.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
+        gCalendarRecordingIsAvailableUntil.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
+
+        LocalDateTime date = new Timestamp(gCalendarStartTime.getTimeInMillis()).toLocalDateTime();
+
+        LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MARCH, 28, 10, 0, 0);
+        int nano = localDateTime.getNano();
+
+        System.out.println(nano);
+        System.out.println("Время: " + date);
+        System.out.println(date.minusNanos(nano).withSecond(0));
+
         return Event.builder()
                 .id(1L)
-                .eventLineNumber(12)
-                .state("ASSIGNED")
-                .title("Очередь к терапевту")
-//                .eventStartTime(new Timestamp(2020,3,23,17,40,0,0))
-//                .recordingIsAvailableUntil(new Timestamp(2020,3,23,17,10,0,0))
+                .title("Covid test 10:00")
+                .eventLineNumber(1)
+                .eventDescription("Test on 'corona'")
+//                .eventStartTime()
+//                .recordingIsAvailableUntil(new Timestamp(gCalendarRecordingIsAvailableUntil.getTimeInMillis()).toLocalDateTime())
                 .averageDuration(15L)
-                .realDuration(2L)
+                .realDuration(9L)
+                .state("NotAssigned")
                 .build();
     }
-
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -20,10 +20,10 @@ public class Event {
 
     private Integer eventLineNumber;
     private String title;
-//    private String eventDescription;
-    // time (?)
-//    private Timestamp eventStartTime;
-//    private Timestamp recordingIsAvailableUntil;
+    private String eventDescription;
+    private LocalDateTime eventStartTime;
+    private LocalDateTime recordingIsAvailableUntil;
+
     private Long averageDuration;
     private Long realDuration;
     // Assigned notAssigned Canceled notObserved Finished
@@ -33,10 +33,8 @@ public class Event {
     @JoinColumn(name = "shedule_id")
     private Shedule shedule;
 
-
-    //            (cascade = CascadeType.ALL)
-//    @JoinColumn(name = "user_id")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public void appointment() {
