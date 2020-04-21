@@ -59,7 +59,6 @@ public class HateoasRestServiceApplication {
         System.out.println(gCalendarRecordingIsAvailableUntil.toString());
         System.out.println(new Timestamp(gCalendarRecordingIsAvailableUntil.getTimeInMillis()));
 
-
         Event firstCOVIDTest = Event.builder()
                 .title("Covid test 10:00")
                 .eventLineNumber(1)

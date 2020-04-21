@@ -18,6 +18,7 @@ public class Company {
     @GeneratedValue
     private  Long id;
 
+    private String inn;
     private String companyName;
     private String companyEmail;
     private String phoneNumber;
