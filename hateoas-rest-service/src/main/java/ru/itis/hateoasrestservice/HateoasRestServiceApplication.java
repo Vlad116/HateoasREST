@@ -3,6 +3,7 @@ package ru.itis.hateoasrestservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import ru.itis.hateoasrestservice.dto.UserDto;
 import ru.itis.hateoasrestservice.models.Company;
 import ru.itis.hateoasrestservice.models.Event;
 import ru.itis.hateoasrestservice.models.Shedule;
@@ -11,6 +12,8 @@ import ru.itis.hateoasrestservice.repositories.CompaniesRepository;
 import ru.itis.hateoasrestservice.repositories.EventsRepository;
 import ru.itis.hateoasrestservice.repositories.ShedulesRepository;
 import ru.itis.hateoasrestservice.repositories.UsersRepository;
+import ru.itis.hateoasrestservice.services.EmailService;
+import ru.itis.hateoasrestservice.services.UserService;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -30,6 +33,8 @@ public class HateoasRestServiceApplication {
         CompaniesRepository companiesRepository = context.getBean(CompaniesRepository.class);
         EventsRepository eventsRepository = context.getBean(EventsRepository.class);
         ShedulesRepository shedulesRepository = context.getBean(ShedulesRepository.class);
+        UserService usersService = context.getBean(UserService.class);
+        EmailService emailService = context.getBean(EmailService.class);
 
         Company clinic = Company.builder()
                 .companyName("Инфекционная больница")
@@ -40,6 +45,8 @@ public class HateoasRestServiceApplication {
                 .build();
 
         companiesRepository.save(clinic);
+
+
 
         GregorianCalendar gCalendarStartTime = new GregorianCalendar();
         gCalendarStartTime.set(2020, Calendar.MARCH, 28, 10,0,0);
@@ -168,15 +175,19 @@ public class HateoasRestServiceApplication {
                 .build();
 
         User emilka = User.builder()
-                .firstName("Эмиль")
-                .lastName("Аминов")
+                .id(176L)
+                .firstName("Alekseev")
+                .lastName("Vladislav")
                 .role("CREATOR")
-                .email("emildirector@gmail.com")
+                .email("vlad-padovan@mail.ru")
+                .login("Vlad116")
                 .phoneNumber("89543322876")
-                .hashPassword("somehashpassword")
+                .hashPassword("pswd123")
                 .events(asList(firstFLUETest,secondCOVIDTest))
                 .build();
 
+        UserDto testuser = UserDto.from(emilka);
+        UserDto testuser2 = UserDto.from(daria);
         usersRepository.saveAll(asList(emilka, daria));
 
         clinic.setUsers(Collections.singletonList(daria));
@@ -184,5 +195,15 @@ public class HateoasRestServiceApplication {
 
         daria.setCompany(clinic);
         usersRepository.saveAll(Collections.singletonList(daria));
+
+        usersService.register(testuser);
+        usersService.register(testuser2);
+        System.out.println(emilka.getId());
+        System.out.println(firstFLUETest.getId());
+        emailService.notification(183L, firstFLUETest.getId());
+        emailService.notification(183L, firstCOVIDTest.getId());
+        emailService.notification(183L, secondCOVIDTest.getId());
+        emailService.notification(183L, thirdCOVIDTest.getId());
+
     }
 }

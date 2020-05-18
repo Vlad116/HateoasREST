@@ -13,10 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "companies")
 public class Company {
     @Id
     @GeneratedValue
-    private  Long id;
+    private Long id;
 
     private String inn;
     private String companyName;
@@ -29,5 +30,10 @@ public class Company {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<User> users;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Requisite> requisites;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Document> documents;
 
 }

@@ -1,19 +1,22 @@
 package ru.itis.hateoasrestservice.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Data
+@Builder
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "service_users")
 public class User {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -21,9 +24,14 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    private String login;
     private String phoneNumber;
     private String hashPassword;
     private String role;
+    private Boolean isUserNonLocked;
+    private Boolean isEmailConfirmed;
+    @JsonIgnore
+    private String confirmString;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<Event> events;
@@ -31,5 +39,8 @@ public class User {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
     private Company company;
+
+//    @Enumerated(value = EnumType.STRING)
+//    private Role role;
 
 }

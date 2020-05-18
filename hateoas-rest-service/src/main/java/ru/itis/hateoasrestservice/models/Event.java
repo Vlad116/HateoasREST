@@ -1,18 +1,19 @@
 package ru.itis.hateoasrestservice.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Data
+@Builder
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "events")
 public class Event {
     @Id
     @GeneratedValue
@@ -26,7 +27,7 @@ public class Event {
 
     private Long averageDuration;
     private Long realDuration;
-    // Assigned notAssigned Canceled notObserved Finished
+    // Assigned notAssigned Canceled(Deleted) notObserved Finished
     private String state;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -6,27 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "company_shedules")
-public class Shedule {
-    @Id
+@Table(name = "company_documents")
+public class Document {
     @GeneratedValue
-    private Long id;
+    @Id
+    Long id;
 
-    private String title;
-    private String description;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shedule")
-    private List<Event> events;
+    String documentName;
+    String documentType;
+    String pathToFile;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
     private Company company;
-
 }
